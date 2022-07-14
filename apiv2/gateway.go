@@ -2,7 +2,6 @@ package apiv2
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -89,16 +88,18 @@ type Gateway struct {
 }
 
 // Invoke Handler implementation
-func (gw *Gateway) Invoke(ctx context.Context, evt events.APIGatewayV2HTTPRequest) (interface{}, error) {
+func (gw *Gateway) Invoke(ctx context.Context, evt events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
 	r, err := NewRequest(ctx, evt)
 	if err != nil {
-		return []byte{}, err
+		return events.APIGatewayV2HTTPResponse{
+			StatusCode: http.StatusInternalServerError,
+			Headers:    map[string]string{"Content-Type": "application/json"},
+			Body:       `{"message": "Error decoding request"}`,
+		}, err
 	}
 
 	w := NewResponse()
 	gw.h.ServeHTTP(w, r)
 
-	resp := w.End()
-
-	return json.Marshal(&resp)
+	return w.End(), nil
 }

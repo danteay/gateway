@@ -3,7 +3,6 @@ package gateway
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -89,16 +88,18 @@ type Gateway struct {
 	h http.Handler
 }
 
-func (gw *Gateway) Invoke(ctx context.Context, evt events.APIGatewayProxyRequest) (interface{}, error) {
+func (gw *Gateway) Invoke(ctx context.Context, evt events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	r, err := NewRequest(ctx, evt)
 	if err != nil {
-		return nil, err
+		return events.APIGatewayProxyResponse{
+			StatusCode: http.StatusInternalServerError,
+			Headers:    map[string]string{"Content-Type": "application/json"},
+			Body:       `{"message": "Error decoding request"}`,
+		}, err
 	}
 
 	w := NewResponse()
 	gw.h.ServeHTTP(w, r)
 
-	resp := w.End()
-
-	return json.Marshal(&resp)
+	return w.End(), nil
 }
