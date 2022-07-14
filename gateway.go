@@ -89,13 +89,7 @@ type Gateway struct {
 	h http.Handler
 }
 
-func (gw *Gateway) Invoke(ctx context.Context, payload []byte) ([]byte, error) {
-	evt := events.APIGatewayProxyRequest{}
-
-	if err := json.Unmarshal(payload, &evt); err != nil {
-		return nil, err
-	}
-
+func (gw *Gateway) Invoke(ctx context.Context, evt events.APIGatewayProxyRequest) (interface{}, error) {
 	r, err := NewRequest(ctx, evt)
 	if err != nil {
 		return nil, err

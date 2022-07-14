@@ -3,6 +3,7 @@ package apiv2_test
 import (
 	"context"
 	"fmt"
+	"github.com/aws/aws-lambda-go/events"
 	"log"
 	"net/http"
 	"testing"
@@ -17,16 +18,23 @@ func Example() {
 }
 
 func hello(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Hello World from Go")
+	_, _ = fmt.Fprintln(w, "Hello World from Go")
 }
 
 func TestGateway_Invoke(t *testing.T) {
-
-	e := []byte(`{"version": "2.0", "rawPath": "/pets/luna", "requestContext": {"http": {"method": "POST"}}}`)
+	evt := events.APIGatewayV2HTTPRequest{
+		Version: "1.0",
+		RawPath: "/pets/luna",
+		RequestContext: events.APIGatewayV2HTTPRequestContext{
+			HTTP: events.APIGatewayV2HTTPRequestContextHTTPDescription{
+				Method: "POST",
+			},
+		},
+	}
 
 	gw := gateway.NewGateway(http.HandlerFunc(hello))
 
-	payload, err := gw.Invoke(context.Background(), e)
+	payload, err := gw.Invoke(context.Background(), evt)
 	assert.NoError(t, err)
-	assert.JSONEq(t, `{"body":"Hello World from Go\n", "cookies": null, "headers":{"Content-Type":"text/plain; charset=utf8"}, "multiValueHeaders":{}, "statusCode":200}`, string(payload))
+	assert.JSONEq(t, `{"body":"Hello World from Go\n", "cookies": null, "headers":{"Content-Type":"text/plain; charset=utf8"}, "multiValueHeaders":{}, "statusCode":200}`, string(payload.([]byte)))
 }

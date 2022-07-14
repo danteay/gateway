@@ -3,6 +3,7 @@ package gateway_test
 import (
 	"context"
 	"fmt"
+	"github.com/aws/aws-lambda-go/events"
 	"log"
 	"net/http"
 	"testing"
@@ -21,11 +22,14 @@ func hello(w http.ResponseWriter, r *http.Request) {
 }
 
 func TestGateway_Invoke(t *testing.T) {
-	e := []byte(`{"version": "1.0", "rawPath": "/pets/luna", "requestContext": {"http": {"method": "POST"}}}`)
+	evt := events.APIGatewayProxyRequest{
+		Path:       "/pets/luna",
+		HTTPMethod: "POST",
+	}
 
 	gw := gateway.NewGateway(http.HandlerFunc(hello))
 
-	payload, err := gw.Invoke(context.Background(), e)
+	payload, err := gw.Invoke(context.Background(), evt)
 	assert.NoError(t, err)
-	assert.JSONEq(t, `{"body":"Hello World from Go\n", "headers":{"Content-Type":"text/plain; charset=utf8"}, "multiValueHeaders":{}, "statusCode":200}`, string(payload))
+	assert.JSONEq(t, `{"body":"Hello World from Go\n", "headers":{"Content-Type":"text/plain; charset=utf8"}, "multiValueHeaders":{}, "statusCode":200}`, string(payload.([]byte)))
 }
