@@ -1,3 +1,8 @@
+## v2.2.0 (2022-07-14)
+
+
+- feat: add call handler fucntion to help create new decorator functions
+
 ## v2.1.2 (2022-07-14)
 
 
