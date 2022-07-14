@@ -1,3 +1,8 @@
+## v2.1.1 (2022-07-14)
+
+
+- fix: event parse from api gatewahandler
+
 ## v2.1.0 (2022-07-14)
 
 
