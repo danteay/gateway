@@ -1,3 +1,9 @@
+## v2.1.2 (2022-07-14)
+
+
+- fix: tests
+- fix: response object should be an api gateway response
+
 ## v2.1.1 (2022-07-14)
 
 
