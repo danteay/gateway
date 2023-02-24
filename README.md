@@ -15,7 +15,7 @@ on the AWS documentation website.
 To install version 1.x for REST APIs. 
 
 ```
-go get github.com/Drafteame/gateway/v2
+go get github.com/danteay/gateway/v2
 ```
 
 # Example
@@ -29,7 +29,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/Drafteame/gateway/v2"
+	"github.com/danteay/gateway/v2"
 )
 
 func main() {
